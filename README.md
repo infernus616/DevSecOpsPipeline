@@ -52,16 +52,16 @@ Jenkins Installation Prequuisities  https://www.jenkins.io/doc/book/installing/l
 1. go to manage jenkins > manage pulgins > search for plugins > install without restart
 ![](https://github.com/praveensirvi1212/DevSecOps-project/blob/main/Images/jenkins.png) 
 
-1. We will required another pulgin called - Kubernetes Continuous Deploy Plugin ( this plugin is deprecated but we can down grade the version for just testing purpose)
-Download the Plugin file from here https://github.com/praveensirvi1212/DevSecOps-project/blob/main/kubernetes-cd.hpi
+1. We will required another plugin called - Kubernetes Continuous Deploy Plugin ( this plugin is deprecated but we can down grade the version for just testing purpose)
+Download the Plugin file.
 1. Now go to manage jenkins > manage pulgins > Advanced Setting > Deploy Plugin > choose the download file ( kubernetes-cd.hpi) > click on Deploy
 ![](https://github.com/praveensirvi1212/DevSecOps-project/blob/main/Images/plugins.png) 
 
 ### Stage-03 : Install Postgre Database and Install SonarQube
-1. Installation guide is available here https://github.com/praveensirvi1212/DevSecOps-project/blob/main/sonarqube_installation_with_postgres_database.md
+1. Installation guide is available online.
 ![](https://github.com/praveensirvi1212/DevSecOps-project/blob/main/Images/sonarqube.jpeg) 
 ### Stage-04 : Install Docker and Create DockerHub account
-1. Installation guide is available here https://github.com/praveensirvi1212/DevSecOps-project/blob/main/docker_installation.md
+1. Installation guide is available online
 1. Create DockerHub account 
 
 ![](https://github.com/praveensirvi1212/DevSecOps-project/blob/main/Images/dockerhub.png) 
@@ -263,8 +263,8 @@ preferences: {}
 users:
 - name: minikube
   user:
-    client-certificate: /home/praveen/.minikube/profiles/minikube/client.crt
-    client-key: home/praveen/.minikube/profiles/minikube/client.key
+    client-certificate: /home/aniru/.minikube/profiles/minikube/client.crt
+    client-key: home/aniru/.minikube/profiles/minikube/client.key
 ```
 ##### Note : I encoded to base64 the data of ca.crt, client.key and client.crt and directly paste the data instead of /home/praveen/.minikube/profiles/minikube/client.crt . But you have to specify the `certificate- authority` to  `certificate- authority-data` ,  `client-certificate` to  `client-certificate-data`,  `client-key` to  `client-key-data`
 
@@ -321,7 +321,7 @@ pipeline {
 ```sh 
 stage('Checkout git') {
      steps {
-	git branch: 'main', url: 'https://github.com/praveensirvi1212/DevSecOps-project'
+	git branch: 'main', url: 'https://github.com/infernus616/DevSecOpsPipeline.git'
   }
 }
 ```
@@ -384,7 +384,7 @@ stage("Quality Gate") {
           }
 ```
 ### Stage-05 : Docker Build
-First write your dockerfile to build docker images.I have posted my  dockerfile here https://github.com/praveensirvi1212/DevSecOps-project/blob/main/Dockerfile .
+First write your dockerfile to build docker images. Dockerfile is available in repo. .
 
 In this stage i  shell command sh to build docker image
 1. Define  a stage Docker Build
@@ -396,8 +396,8 @@ In this stage i  shell command sh to build docker image
 ```sh
 stage('Docker Build') {
       steps {
-           sh 'docker build -t praveensirvi/sprint-boot-app:v1.$BUILD_ID .'
-           sh 'docker image tag praveensirvi/sprint-boot-app:v1.$BUILD_ID praveensirvi/sprint-boot-app:latest'
+           sh 'docker build -t infernus616/sprint-boot-app:v1.$BUILD_ID .'
+           sh 'docker image tag infernus616/sprint-boot-app:v1.$BUILD_ID infernus616/sprint-boot-app:latest'
 	}
 }
 ```
@@ -411,7 +411,7 @@ In this stage i  trivy shell command sh to scan docker image
 ```sh
 stage('Image Scan') {
 	steps {
-	sh ' trivy image --format template --template "@/usr/local/share/trivy/templates/html.tpl" -o report.html praveensirvi/sprint-boot-app:latest '
+	sh ' trivy image --format template --template "@/usr/local/share/trivy/templates/html.tpl" -o report.html aniru/sprint-boot-app:latest '
 	}
 }
 ```
@@ -454,15 +454,15 @@ stage('Docker Push') {
        steps {
 	withVault(configuration: [skipSslVerification: true, timeout: 60, vaultCredentialId:   'vault-cred', vaultUrl: 'http://your-vault-server-url:8200'], vaultSecrets: [[path: 'secrets/creds/docker', secretValues: [[vaultKey: 'username'], [vaultKey: 'password']]]]) {
 	sh "docker login -u ${username} -p ${password} "
-	sh 'docker push praveensirvi/sprint-boot-app:v1.$BUILD_ID'
-	sh 'docker push praveensirvi/sprint-boot-app:latest'
-	sh 'docker rmi praveensirvi/sprint-boot-app:v1.$BUILD_ID praveensirvi/sprint-boot-app:latest'
+	sh 'docker push aniru/sprint-boot-app:v1.$BUILD_ID'
+	sh 'docker push aniru/sprint-boot-app:latest'
+	sh 'docker rmi aniru/sprint-boot-app:v1.$BUILD_ID aniru/sprint-boot-app:latest'
 	}
       }
 }
  ``` 
 ### Stage-08: Deploy to kubernetes
-write your kubernetes  deployment and service manifest.Find my kubernetes manifest here https://github.com/praveensirvi1212/DevSecOps-project/blob/main/spring-boot-deployment.yaml .
+write your kubernetes  deployment and service manifest.Find my kubernetes manifest here https://github.com/infernus616/DevSecOpsPipeline/blob/main/spring-boot-deployment.yaml .
 
 Now generate pipeline syntax:- 
 For this Kubernetes continuous Deploy plugins should be installed
@@ -505,7 +505,7 @@ slackSend( channel: "#devops", token: 'slack-token', color : "danger", message: 
 }
 }
  ```
-#### Find whole pipeline here https://github.com/praveensirvi1212/DevSecOps-project/blob/main/Jenkinsfile 
+#### Find whole pipeline here https://github.com/infernus616/DevSecOpsPipeline/blob/main/Jenkinsfile 
 
 ## Step: 4 Projecct Output
 
