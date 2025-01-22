@@ -46,7 +46,7 @@ Push all the web application page code file into github
 
 ### Stage-02 : Install Jenkins and start Jenkins 
 Jenkins Installation Prequuisities  https://www.jenkins.io/doc/book/installing/linux/
-1. Installation guide is available here  https://github.com/praveensirvi1212/DevSecOps-project/blob/main/Jenkins_installation.md
+1. Installation guide is available online
 1. After installation, install suggested plugins
 1. Open Jenkins Dashboard and install required plugins – SonarQube Scanner, Hashicorp Vault, Slack
 1. go to manage jenkins > manage pulgins > search for plugins > install without restart
